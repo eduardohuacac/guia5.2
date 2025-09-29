@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FLutter Demo',
+      title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 151, 9, 9),
@@ -64,13 +64,14 @@ class _MyHomePageState extends State<MyHomePage> {
           title: const Text("Agregar Título"),
           content: TextField(
             controller: _EditTituloLibro,
-            decoration: const InputDecoration(hintText: "Ingrese el titulo"),
+            decoration: const InputDecoration(hintText: "Ingrese el título"),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 if (_EditTituloLibro.text.isNotEmpty) {
                   _agregarNuevoLibro(_EditTituloLibro.text.toString());
+                  _EditTituloLibro.clear();
                   Navigator.of(context).pop();
                 }
               },
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return AlertDialog(
           title: const Text("Confirmar eliminación"),
           content: const Text(
-            "¿Estas seguro de que quieres eliminar este libro?",
+            "¿Estás seguro de que quieres eliminar este libro?",
           ),
           actions: [
             TextButton(
@@ -135,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Modificar Titulo del Libro"),
+          title: const Text("Modificar Título del Libro"),
           content: TextField(
             controller: _tituloController,
             decoration: const InputDecoration(
