@@ -52,8 +52,35 @@ class _MyHomePageState extends State<MyHomePage> {
   void _agregarNuevoLibro(String tituloLibro) async {
     final nuevoLibro = Libro(tituloLibro: tituloLibro);
     await _dbHelper.insertLibro(nuevoLibro);
-    _EditTituloLibro.clear(); // limpiar después de agregar
+    print("SE AGREGÓ EL NUEVO LIBRO");
     _cargarListaLibros();
+  }
+
+  void _mostrarVentanaAgregar() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Agregar Título"),
+          content: TextField(
+            controller: _EditTituloLibro,
+            decoration: const InputDecoration(hintText: "Ingrese el título"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (_EditTituloLibro.text.isNotEmpty) {
+                  _agregarNuevoLibro(_EditTituloLibro.text.toString());
+                  _EditTituloLibro.clear();
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text("Agregar"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _eliminarLibro(int id) async {
@@ -61,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _cargarListaLibros();
   }
 
-  void _mostrarMensajeEliminar(int id) {
+  void _mostrarMensajeModificar(int id) {
     showDialog(
       context: context,
       builder: (context) {
@@ -145,62 +172,32 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text("SqlLite Flutter"),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: Column(
-        children: [
-          // Lista de libros
-          Expanded(
-            child: ListView.separated(
-              itemCount: _items.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final libro = _items[index];
-                return ListTile(
-                  title: Text(libro.tituloLibro),
-                  subtitle: Text('ID: ${libro.id}'),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                    onPressed: () {
-                      _mostrarMensajeEliminar(libro.id!);
-                    },
-                  ),
-                  onTap: () {
-                    _ventanaEditar(libro.id!, libro.tituloLibro);
-                  },
-                );
+      body: ListView.separated(
+        itemCount: _items.length,
+        separatorBuilder: (context, index) => const Divider(),
+        itemBuilder: (context, index) {
+          final libro = _items[index];
+          return ListTile(
+            title: Text(libro.tituloLibro),
+            subtitle: Text('ID: ${libro.id}'),
+            trailing: IconButton(
+              icon: const Icon(
+                Icons.delete,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+              onPressed: () {
+                _mostrarMensajeModificar(libro.id!);
               },
             ),
-          ),
-
-          // Formulario para agregar nuevo libro
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _EditTituloLibro,
-                    decoration: const InputDecoration(
-                      labelText: "Nuevo libro",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_EditTituloLibro.text.isNotEmpty) {
-                      _agregarNuevoLibro(_EditTituloLibro.text);
-                    }
-                  },
-                  child: const Text("Agregar"),
-                ),
-              ],
-            ),
-          ),
-        ],
+            onTap: () {
+              _ventanaEditar(libro.id!, libro.tituloLibro);
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _mostrarVentanaAgregar,
+        child: const Icon(Icons.add),
       ),
     );
   }
